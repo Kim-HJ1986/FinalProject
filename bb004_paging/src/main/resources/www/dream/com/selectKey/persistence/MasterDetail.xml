@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- resultMap : DB Table 정의 내역과 객체 정의 내역에 있어 mismatch(부조화)가 있을 시 이를 연동, 
+	짝 지어주는 정보를 정의함 -->
+
+<mapper
+	namespace="www.dream.com.selectKey.persistence.MasterDetail">
+	<!-- int findByName(@Param("string") String string, @Param("reg_dt") Date 
+		reg_dt); -->
+	<select id="findByName" resultType="int">
+	<![CDATA[
+	select id
+	  from s_master
+	 where name = #{string}
+	   and reg_dt = #{reg_dt}
+	]]>
+	</select>
+
+	<!-- void insertMaster(MasterVO newBie); -->
+	<insert id="insertMaster">
+		insert into s_master(id, name, reg_dt)
+		values(seq_master.nextval, #{name},
+		#{reg_dt})
+	</insert>
+
+	<!-- void insertMasterBySelectKey(MasterVO newBie) -->
+	<insert id="insertMasterBySelectKey">
+		<selectKey keyProperty="id" order="BEFORE" resultType="int">
+			seq_master.nextval from dual
+		</selectKey>
+		insert into s_master(id, name)
+			values(#{id}, #{name})
+	</insert>
+
+	<!-- void insertDetail(@Param("masterId") idOfNew, @Param("detail") DetailVO 
+		addr); -->
+	<insert id="insertDetail">
+		insert into s_detail(m_id, id, info)
+		values(#{masterId}, seq_master.nextval,
+		#{detail.info})
+	</insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
